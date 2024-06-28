@@ -1,5 +1,6 @@
 import { config } from '../config/config.js';
 import { PACKET_TYPE } from '../constants/header.js';
+import { getHandlerById } from '../handlers/index.js';
 import { packetParser } from '../utils/parser/packetParser.js';
 
 export const onData = (socket) => async (data) =>
@@ -27,10 +28,12 @@ export const onData = (socket) => async (data) =>
 				case PACKET_TYPE.NORMAL:
 					const { handlerId, sequence, payload, userId } = packetParser(packet);
 
-					console.log('핸들러 ID:', handlerId);
-					console.log('유저 ID:', userId);
-					console.log('페이로드:', payload);
-					console.log('시퀀스:', sequence);
+					const handler = getHandlerById(handlerId);
+					await handler({
+						socket,
+						userId,
+						payload,
+					});
 			}
 		}
 		else
