@@ -1,7 +1,8 @@
 import net from 'net';
+import { getProtoMessages, loadProtos } from './src/init/loadProtos.js';
 
-const TOTAL_LENGTH = 4; // 전체 길이를 나타내는 4바이트
-const PACKET_TYPE_LENGTH = 1; // 패킷타입을 나타내는 1바이트
+const TOTAL_LENGTH = 4;
+const PACKET_TYPE_LENGTH = 1;
 
 const readHeader = (buffer) =>
 {
@@ -11,44 +12,59 @@ const readHeader = (buffer) =>
 	};
 };
 
-const writeHeader = (length, packetType) =>
+const sendPacket = (socket, packet) =>
 {
-	const headerSize = TOTAL_LENGTH + PACKET_TYPE_LENGTH;
-	const buffer = Buffer.alloc(headerSize);
-	buffer.writeUInt32BE(length + headerSize, 0);
-	buffer.writeUInt8(packetType, TOTAL_LENGTH);
-	return buffer;
+	const protoMessages = getProtoMessages();
+	const Packet = protoMessages.common.Packet;
+	if (!Packet)
+	{
+		console.error('Packet 메시지를 찾을 수 없습니다.');
+		return;
+	}
+
+	const buffer = Packet.encode(packet).finish();
+	const packetLength = Buffer.alloc(TOTAL_LENGTH);
+	packetLength.writeUInt32BE(buffer.length + TOTAL_LENGTH + PACKET_TYPE_LENGTH, 0);
+
+	const packetType = Buffer.alloc(PACKET_TYPE_LENGTH);
+	packetType.writeUInt8(1, 0);
+
+	const packetWithLength = Buffer.concat([packetLength, packetType, buffer]);
+
+	socket.write(packetWithLength);
 };
 
-// 서버에 연결할 호스트와 포트
 const HOST = 'localhost';
 const PORT = 5555;
 
 const client = new net.Socket();
 
-client.connect(PORT, HOST, () =>
+client.connect(PORT, HOST, async () =>
 {
-	console.log('서버 연결 성공');
+	console.log('서버 연결에 성공했습니다.');
+	await loadProtos();
 
-	const message = 'Hi, There!';
-	const test = Buffer.from(message);
+	const message = {
+		handlerId: 2,
+		userId: 'xyz',
+		payload: {},
+		clientVersion: '1.0.0',
+		sequence: 0,
+	};
 
-	const header = writeHeader(test.length, 11);
-	const packet = Buffer.concat([header, test]);
-	client.write(packet);
+	sendPacket(client, message);
 });
 
 client.on('data', (data) =>
 {
-	const buffer = Buffer.from(data); // 버퍼 객체의 메서드를 사용하기 위해 변환
+	const buffer = Buffer.from(data);
 
 	const { handlerId, length } = readHeader(buffer);
 	console.log(`핸들러 ID: ${handlerId}`);
 	console.log(`패킷 길이: ${length}`);
 
 	const headerSize = TOTAL_LENGTH + PACKET_TYPE_LENGTH;
-	// 메시지 추출
-	const message = buffer.slice(headerSize); // 앞의 헤더 부분을 잘라낸다.
+	const message = buffer.slice(headerSize);
 
 	console.log(`서버에게 받은 메세지: ${message}`);
 });
