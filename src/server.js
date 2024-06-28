@@ -21,8 +21,15 @@ const server = net.createServer((socket) =>
 	});
 });
 
-server.listen(PORT, () =>
+initServer().then(() =>
 {
-	console.log(`서버가 ${PORT}번 포트로 동작중입니다!`);
-	console.log(server.address());
+	server.listen(PORT, () =>
+	{
+		console.log(`서버가 ${PORT}번 포트로 동작중입니다!`);
+		console.log(server.address());
+	});
+}).catch((err) =>
+{
+	console.error(err);
+	process.exit(1); // 오류 발생 시 프로세스 종료
 });
