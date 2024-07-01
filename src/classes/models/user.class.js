@@ -8,7 +8,6 @@ class User
 		this.socket = socket;
 		this.x = 0;
 		this.y = 0;
-		this.sequence = 0;
 		this.lastUpdateTime = Date.now();
 	}
 
@@ -17,11 +16,6 @@ class User
 		this.x = x;
 		this.y = y;
 		this.lastUpdateTime = Date.now();
-	}
-
-	getNextSequence()
-	{
-		return ++this.sequence;
 	}
 
 	ping()

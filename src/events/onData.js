@@ -43,11 +43,11 @@ export const onData = (socket) => async (data) =>
 						}
 						break;
 					case PACKET_TYPE.NORMAL:
-						const { handlerId, sequence, payload, userId } = packetParser(packet);
+						const { handlerId, payload, userId } = packetParser(packet);
 
 						const user = getUserById(userId);
-						if (user && user.sequence !== sequence)
-							throw new CustomError(ErrorCodes.INVALID_SEQUENCE, '잘못된 호출 값입니다. ');
+						if (!user)
+							throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
 
 						const handler = getHandlerById(handlerId);
 						await handler({
