@@ -3,6 +3,7 @@ import { PACKET_TYPE } from '../constants/header.js';
 import { getHandlerById } from '../handlers/index.js';
 import { getUserById } from '../session/user.session.js';
 import CustomError from '../utils/error/customError.js';
+import { ErrorCodes } from '../utils/error/errorCodes.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { packetParser } from '../utils/parser/packetParser.js';
 
