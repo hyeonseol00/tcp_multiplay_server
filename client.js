@@ -6,6 +6,7 @@ const PACKET_TYPE_LENGTH = 1; // 패킷타입을 나타내는 1바이트
 
 let userId;
 let sequence;
+const deviceId = 'test-device';
 
 const createPacket = (handlerId, payload, clientVersion = '1.0.0', type, name) =>
 {
@@ -22,9 +23,9 @@ const createPacket = (handlerId, payload, clientVersion = '1.0.0', type, name) =
 
 	return {
 		handlerId,
-		userId: '1',
+		userId,
 		clientVersion,
-		sequence: 0,
+		sequence,
 		payload: payloadBuffer,
 	};
 };
@@ -61,7 +62,7 @@ client.connect(PORT, HOST, async () =>
 	console.log('서버 연결에 성공했습니다.');
 	await loadProtos();
 
-	const successPacket = createPacket(0, { deviceId: 'jaeseok' }, '1.0.0', 'initial', 'InitialPacket');
+	const successPacket = createPacket(0, { deviceId }, '1.0.0', 'initial', 'InitialPacket');
 
 	sendPacket(client, successPacket);
 });
@@ -82,18 +83,16 @@ client.on('data', (data) =>
 		try
 		{
 			const response = Response.decode(packet);
-
+			const responseData = JSON.parse(Buffer.from(response.data).toString());
 			if (response.handlerId === 0)
-			{
-				const responseData = JSON.parse(Buffer.from(response.data).toString());
-
 				userId = responseData.userId;
-				console.log('응답 데이터:', responseData);
-			}
+
+			console.log('응답 데이터:', responseData);
 			sequence = response.sequence;
-		} catch (e)
+		}
+		catch (err)
 		{
-			console.log(e);
+			console.log(err);
 		}
 	}
 });
