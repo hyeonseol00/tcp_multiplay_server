@@ -41,6 +41,7 @@ export const onData = (socket) => async (data) =>
 
 							user.handlePong(pingMessage);
 						}
+						break;
 					case PACKET_TYPE.NORMAL:
 						const { handlerId, sequence, payload, userId } = packetParser(packet);
 

@@ -1,5 +1,6 @@
 import { HANDLER_IDS } from '../constants/handlerIds.js';
 import CustomError from '../utils/error/customError.js';
+import { ErrorCodes } from '../utils/error/errorCodes.js';
 import createGameHandler from './game/createGame.handler.js';
 import joinGameHandler from './game/joinGame.handler.js';
 import initialHandler from './user/initial.handler.js';
