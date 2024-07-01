@@ -11,7 +11,7 @@ const createGameHandler = ({ socket, userId, payload }) =>
 {
 	try
 	{
-		const gameId = uuidv4();
+		const { gameId } = payload;
 		const gameSession = addGameSession(gameId);
 
 		const user = getUserById(userId);
