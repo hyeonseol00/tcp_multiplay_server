@@ -26,3 +26,27 @@ export const createPingPacket = (timestamp) =>
 
 	return makeNotification(pingPacket, 0);
 };
+
+export const createLocationPacket = (users) =>
+{
+	const protoMessages = getProtoMessages();
+	const Location = protoMessages.gameNotification.LocationUpdate;
+
+	const payload = { users };
+	const message = Location.create(payload);
+	const locationPacket = Location.encode(message).finish();
+
+	return makeNotification(locationPacket, PACKET_TYPE.LOCATION);
+};
+
+export const newUserNotification = (userId, timestamp) =>
+{
+	const protoMessages = getProtoMessages();
+	const NewUser = protoMessages.gameNotification.NewUser;
+
+	const payload = { userId, timestamp };
+	const message = NewUser.create(payload);
+	const newUserPacket = NewUser.encode(message).finish();
+
+	return makeNotification(newUserPacket, PACKET_TYPE.NEW_USER);
+};

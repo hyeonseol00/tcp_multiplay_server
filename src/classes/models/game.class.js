@@ -1,3 +1,4 @@
+import { createLocationPacket, newUserNotification } from '../../utils/notification/game.notification.js';
 import IntervalManager from '../managers/interval.manager.js';
 
 const MAX_PLAYERS = 2;
@@ -20,9 +21,13 @@ class Game
 
 		this.intervalManager.addPlayer(user.id, user.ping.bind(user), 1000);
 		if (this.users.length === MAX_PLAYERS)
-		{
 			setTimeout(() => this.startGame(), 3000);
-		}
+
+
+		const newUserPacket = newUserNotification(user.id, Date.now());
+		console.log(this.getMaxLatency());
+
+		this.users.forEach((user) => { user.socket.write(newUserPacket); });
 	}
 
 	getUser(userId)
@@ -42,6 +47,27 @@ class Game
 	startGame()
 	{
 		this.state = 'inProgress';
+	}
+
+	getMaxLatency()
+	{
+		let maxLatency = 0;
+		this.users.forEach((user) => { maxLatency = Math.max(maxLatency, user.latency); });
+
+		return maxLatency;
+	}
+
+	getAllLocation()
+	{
+		const maxLatency = this.getMaxLatency();
+
+		const locationData = this.users.map((user) =>
+		{
+			const { x, y } = user.calculatePosition(maxLatency);
+			return { id: user.id, x, y };
+		});
+
+		return createLocationPacket(locationData);
 	}
 }
 
