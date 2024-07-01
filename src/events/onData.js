@@ -46,7 +46,7 @@ export const onData = (socket) => async (data) =>
 						const { handlerId, payload, userId } = packetParser(packet);
 
 						const user = getUserById(userId);
-						if (!user)
+						if (!user && handlerId != 0)
 							throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
 
 						const handler = getHandlerById(handlerId);
