@@ -83,7 +83,7 @@ client.connect(PORT, HOST, async () =>
 	console.log('서버 연결에 성공했습니다.');
 	await loadProtos();
 
-	const successPacket = createPacket(0, { deviceId }, '1.0.0', 'initial', 'InitialPacket');
+	const successPacket = createPacket(0, { deviceId, playerId: "", latency: 0 }, '1.0.0', 'initial', 'InitialPacket');
 
 	sendPacket(client, successPacket);
 });
