@@ -1,5 +1,6 @@
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { config } from '../../config/config.js';
+import { PACKET_TYPE } from '../../constants/header.js';
 
 const makeNotification = (message, type) =>
 {
@@ -37,16 +38,4 @@ export const createLocationPacket = (users) =>
 	const locationPacket = Location.encode(message).finish();
 
 	return makeNotification(locationPacket, PACKET_TYPE.LOCATION);
-};
-
-export const newUserNotification = (userId, timestamp) =>
-{
-	const protoMessages = getProtoMessages();
-	const NewUser = protoMessages.gameNotification.NewUser;
-
-	const payload = { userId, timestamp };
-	const message = NewUser.create(payload);
-	const newUserPacket = NewUser.encode(message).finish();
-
-	return makeNotification(newUserPacket, PACKET_TYPE.NEW_USER);
 };

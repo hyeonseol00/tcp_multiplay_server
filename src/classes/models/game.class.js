@@ -1,4 +1,4 @@
-import { createLocationPacket, newUserNotification } from '../../utils/notification/game.notification.js';
+import { createLocationPacket } from '../../utils/notification/game.notification.js';
 import IntervalManager from '../managers/interval.manager.js';
 
 const MAX_PLAYERS = 2;
@@ -19,15 +19,9 @@ class Game
 			throw new Error('게임 세션에 자리가 없습니다!');
 		this.users.push(user);
 
-		this.intervalManager.addPlayer(user.id, user.ping.bind(user), 1000);
+		// this.intervalManager.addPlayer(user.id, user.ping.bind(user), 1000);
 		if (this.users.length === MAX_PLAYERS)
 			setTimeout(() => this.startGame(), 3000);
-
-
-		const newUserPacket = newUserNotification(user.id, Date.now());
-		console.log(this.getMaxLatency());
-
-		this.users.forEach((user) => { user.socket.write(newUserPacket); });
 	}
 
 	getUser(userId)
@@ -64,7 +58,7 @@ class Game
 		const locationData = this.users.map((user) =>
 		{
 			const { x, y } = user.calculatePosition(maxLatency);
-			return { id: user.id, x, y };
+			return { id: user.id, playerId: user.playerId, x, y };
 		});
 
 		return createLocationPacket(locationData);

@@ -2,12 +2,14 @@ import { getGameSession } from '../../session/game.session.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
+import { config } from '../../config/config.js';
 
 const updateLocationHandler = ({ socket, userId, payload }) =>
 {
 	try
 	{
-		const { gameId, x, y } = payload;
+		const { x, y } = payload;
+		const gameId = config.session.id;
 		const gameSession = getGameSession(gameId);
 
 		if (!gameSession)
