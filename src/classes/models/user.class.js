@@ -21,6 +21,21 @@ class User
 	{
 		return ++this.sequence;
 	}
+
+	ping()
+	{
+		const now = Date.now();
+
+		console.log(`${this.id}: ping`);
+		this.socket.write(createPingPacket(now));
+	}
+
+	handlePong(data)
+	{
+		const now = Date.now();
+		this.latency = (now - data.timestamp) / 2;
+		console.log(`${now}에 사용자 ${this.id}로부터 pong을 수신했습니다. 지연 시간: ${this.latency}ms`);
+	}
 }
 
 export default User;
