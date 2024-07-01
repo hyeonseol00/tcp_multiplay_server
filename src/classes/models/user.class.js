@@ -38,6 +38,18 @@ class User
 		this.latency = (now - data.timestamp) / 2;
 		console.log(`${now}에 사용자 ${this.id}로부터 pong을 수신했습니다. 지연 시간: ${this.latency}ms`);
 	}
+
+	calculatePosition(latency)
+	{
+		const timeDiff = latency / 1000;
+		const speed = 1;
+		const distance = speed * timeDiff;
+
+		return {
+			x: this.x + distance,
+			y: this.y,
+		};
+	}
 }
 
 export default User;
