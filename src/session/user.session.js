@@ -29,3 +29,8 @@ export const getNextSequence = (id) =>
 
 	return null;
 };
+
+export const getUserBySocket = (socket) =>
+{
+	return userSessions.find((user) => user.socket === socket);
+};
