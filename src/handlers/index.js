@@ -1,11 +1,16 @@
 import { HANDLER_IDS } from '../constants/handlerIds.js';
 import CustomError from '../utils/error/customError.js';
+import createGameHandler from './game/createGame.handler.js';
 import initialHandler from './user/initial.handler.js';
 
 const handlers = {
 	[HANDLER_IDS.INITIAL]: {
 		handler: initialHandler,
 		protoType: 'initial.InitialPacket',
+	},
+	[HANDLER_IDS.CREATE_GAME]: {
+		handler: createGameHandler,
+		protoType: 'game.CreateGamePayload',
 	},
 };
 
