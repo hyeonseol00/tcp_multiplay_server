@@ -2,13 +2,13 @@ import { createPingPacket } from '../../utils/notification/game.notification.js'
 
 class User
 {
-	constructor(id, playerId, socket, latency)
+	constructor(id, playerId, socket, latency, x, y)
 	{
 		this.id = id;
 		this.playerId = playerId;
 		this.socket = socket;
-		this.x = 0;
-		this.y = 0;
+		this.x = x;
+		this.y = y;
 		this.lastUpdateTime = Date.now();
 		this.latency = latency;
 	}

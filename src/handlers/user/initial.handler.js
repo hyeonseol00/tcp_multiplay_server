@@ -6,6 +6,7 @@ import { getAllGameSessions } from '../../session/game.session.js';
 import joinGameHandler from '../game/joinGame.handler.js';
 import createGameHandler from '../game/createGame.handler.js';
 import { config } from '../../config/config.js';
+import { createUserbackupCoordinate, findUserByDeviceID } from '../../db/backup/coordinates.db.js';
 
 const initialHandler = async ({ socket, userId, payload }) =>
 {
@@ -14,7 +15,12 @@ const initialHandler = async ({ socket, userId, payload }) =>
 		const { deviceId, playerId, latency } = payload;
 		const gameSessions = getAllGameSessions();
 
-		addUser(socket, deviceId, playerId, latency);
+		let user = await findUserByDeviceID(deviceId);
+
+		if (!user)
+			user = await createUserbackupCoordinate(deviceId);
+
+		addUser(socket, deviceId, playerId, latency, user.x, user.y);
 
 		const initialResponse = createResponse(
 			HANDLER_IDS.INITIAL,
