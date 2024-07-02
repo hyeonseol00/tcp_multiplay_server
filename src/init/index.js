@@ -1,3 +1,4 @@
+import { testAllConnections } from '../utils/db/testConnection.js';
 import { loadProtos } from './loadProtos.js';
 
 const initServer = async () =>
@@ -5,6 +6,7 @@ const initServer = async () =>
 	try
 	{
 		await loadProtos();
+		await testAllConnections();
 	}
 	catch (err)
 	{
