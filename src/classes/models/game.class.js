@@ -1,7 +1,7 @@
 import { createLocationPacket } from '../../utils/notification/game.notification.js';
 import IntervalManager from '../managers/interval.manager.js';
 
-const MAX_PLAYERS = 2;
+const MAX_PLAYERS = 10;
 
 class Game
 {
@@ -51,7 +51,7 @@ class Game
 		return maxLatency;
 	}
 
-	getAllLocation()
+	getAllLocation(excludeUserId)
 	{
 		const maxLatency = this.getMaxLatency();
 
@@ -60,6 +60,9 @@ class Game
 			const { x, y } = user.calculatePosition(maxLatency);
 			return { id: user.id, playerId: user.playerId, x, y };
 		});
+
+		const idx = locationData.findIndex((user) => user.id == excludeUserId);
+		locationData.splice(idx, 1);
 
 		return createLocationPacket(locationData);
 	}
