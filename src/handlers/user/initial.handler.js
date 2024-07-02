@@ -12,23 +12,22 @@ const initialHandler = async ({ socket, userId, payload }) =>
 	try
 	{
 		const { deviceId, playerId, latency } = payload;
-		const registerId = playerId ? playerId : deviceId;
 		const gameSessions = getAllGameSessions();
 
-		addUser(socket, registerId, latency);
+		addUser(socket, deviceId, playerId, latency);
 
 		const initialResponse = createResponse(
 			HANDLER_IDS.INITIAL,
 			RESPONSE_SUCCESS_CODE,
-			{ userId: registerId },
+			{ userId: deviceId },
 		);
 
 		socket.write(initialResponse);
 
 		if (gameSessions.length <= 0)
-			createGameHandler({ socket, userId: registerId, payload: { gameId: config.session.id } });
+			createGameHandler({ socket, userId: deviceId, payload: { gameId: config.session.id } });
 		else
-			joinGameHandler({ socket, userId: registerId, payload: { gameId: config.session.id } });
+			joinGameHandler({ socket, userId: deviceId, payload: { gameId: config.session.id } });
 	}
 	catch (err)
 	{

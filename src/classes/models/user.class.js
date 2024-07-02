@@ -2,9 +2,10 @@ import { createPingPacket } from '../../utils/notification/game.notification.js'
 
 class User
 {
-	constructor(id, socket, latency)
+	constructor(id, playerId, socket, latency)
 	{
 		this.id = id;
+		this.playerId = playerId;
 		this.socket = socket;
 		this.x = 0;
 		this.y = 0;
@@ -41,7 +42,7 @@ class User
 		const distance = speed * timeDiff;
 
 		return {
-			x: this.x + distance,
+			x: this.x,
 			y: this.y,
 		};
 	}
