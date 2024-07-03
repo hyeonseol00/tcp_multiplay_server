@@ -1,4 +1,5 @@
 import { config } from '../config/config.js';
+import { updateUserBackupCoordinate } from '../db/backup/coordinates.db.js';
 import { getGameSession } from '../session/game.session.js';
 import { getUserBySocket, removeUser } from '../session/user.session.js';
 
