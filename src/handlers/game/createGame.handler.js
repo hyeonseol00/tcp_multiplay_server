@@ -26,6 +26,8 @@ const createGameHandler = ({ socket, userId, payload }) =>
 			userId,
 		);
 
+		console.log("현재 접속 중인 유저: ", gameSession.getAllUserIds());
+
 		socket.write(createGameResponse);
 	}
 	catch (err)

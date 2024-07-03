@@ -39,12 +39,10 @@ const initialHandler = async ({ socket, userId, payload }) =>
 
 		socket.write(initialResponse);
 
-		if (gameSession.length <= 0)
+		if (!gameSession)
 			createGameHandler({ socket, userId: deviceId, payload: { gameId: config.session.id } });
 		else
 			joinGameHandler({ socket, userId: deviceId, payload: { gameId: config.session.id } });
-
-		console.log("현재 접속 중인 유저: ", gameSession.getAllUserIds());
 	}
 	catch (err)
 	{

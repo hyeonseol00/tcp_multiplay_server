@@ -31,6 +31,8 @@ const joinGameHandler = ({ socket, userId, payload }) =>
 			user.id,
 		);
 
+		console.log("현재 접속 중인 유저: ", gameSession.getAllUserIds());
+
 		socket.write(joinGameResponse);
 	}
 	catch (err)
