@@ -1,34 +1,37 @@
-import { addUser } from '../../session/user.session.js';
+import { addUser, getUserById } from '../../session/user.session.js';
 import { HANDLER_IDS, RESPONSE_SUCCESS_CODE } from '../../constants/handlerIds.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { handleError } from '../../utils/error/errorHandler.js';
-import { getAllGameSessions } from '../../session/game.session.js';
+import { getGameSession } from '../../session/game.session.js';
 import joinGameHandler from '../game/joinGame.handler.js';
 import createGameHandler from '../game/createGame.handler.js';
 import { config } from '../../config/config.js';
 import { createUserbackupCoordinate, findUserByDeviceID } from '../../db/backup/coordinates.db.js';
+import CustomError from '../../utils/error/customError.js';
 
 const initialHandler = async ({ socket, userId, payload }) =>
 {
 	try
 	{
 		const { deviceId, playerId, latency } = payload;
-		const gameSessions = getAllGameSessions();
+		const gameSession = getGameSession(config.session.id);
+		const user = getUserById(playerId);
+		if (user)
+			throw new CustomError(ErrorCodes.DUPLICATE_DEVICE_ID, '중복된 deviceId 입니다.');
 
-		let user = await findUserByDeviceID(deviceId);
+		let userData = await findUserByDeviceID(deviceId);
+		if (!userData)
+			userData = await createUserbackupCoordinate(deviceId);
 
-		if (!user)
-			user = await createUserbackupCoordinate(deviceId);
-
-		addUser(socket, deviceId, playerId, latency, user.x, user.y);
+		addUser(socket, deviceId, playerId, latency, userData.x, userData.y);
 
 		const initialResponse = createResponse(
 			HANDLER_IDS.INITIAL,
 			RESPONSE_SUCCESS_CODE,
 			{
 				userId: deviceId,
-				x: user.x,
-				y: user.y
+				x: userData.x,
+				y: userData.y
 			},
 			playerId,
 			"InitData",
@@ -36,12 +39,12 @@ const initialHandler = async ({ socket, userId, payload }) =>
 
 		socket.write(initialResponse);
 
-		if (gameSessions.length <= 0)
+		if (gameSession.length <= 0)
 			createGameHandler({ socket, userId: deviceId, payload: { gameId: config.session.id } });
 		else
 			joinGameHandler({ socket, userId: deviceId, payload: { gameId: config.session.id } });
 
-		console.log("현재 접속 중인 유저: ", gameSessions[0].getAllUserIds());
+		console.log("현재 접속 중인 유저: ", gameSession.getAllUserIds());
 	}
 	catch (err)
 	{
