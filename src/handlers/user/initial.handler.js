@@ -25,7 +25,13 @@ const initialHandler = async ({ socket, userId, payload }) =>
 		const initialResponse = createResponse(
 			HANDLER_IDS.INITIAL,
 			RESPONSE_SUCCESS_CODE,
-			{ userId: deviceId },
+			{
+				userId: deviceId,
+				x: user.x,
+				y: user.y
+			},
+			playerId,
+			"InitData",
 		);
 
 		socket.write(initialResponse);
@@ -34,6 +40,8 @@ const initialHandler = async ({ socket, userId, payload }) =>
 			createGameHandler({ socket, userId: deviceId, payload: { gameId: config.session.id } });
 		else
 			joinGameHandler({ socket, userId: deviceId, payload: { gameId: config.session.id } });
+
+		console.log("현재 접속 중인 유저: ", gameSessions[0].getAllUserIds());
 	}
 	catch (err)
 	{
