@@ -1,4 +1,5 @@
 import { createPingPacket } from '../../utils/notification/game.notification.js';
+import roundM5 from '../../utils/round.js';
 
 class User
 {
@@ -35,15 +36,37 @@ class User
 		console.log(`${now}에 사용자 ${this.id}로부터 pong을 수신했습니다. 지연 시간: ${this.latency}ms`);
 	}
 
-	calculatePosition(latency)
+	calculatePosition(latency, newX = this.x, newY = this.y)
 	{
 		const timeDiff = latency / 1000;
-		const speed = 1;
+		const speed = 300;
 		const distance = speed * timeDiff;
 
+		const deltaPos = {
+			x: roundM5(newX) - this.x,
+			y: roundM5(newY) - this.y
+		};
+		const deltaDistance = Math.sqrt(deltaPos.x * deltaPos.x + deltaPos.y * deltaPos.y);
+
+		if (deltaDistance === 0 || (newX == 0 && newY == 0))
+			return {
+				x: this.x,
+				y: this.y
+			};
+
+		const unitVector = {
+			x: deltaPos.x / deltaDistance,
+			y: deltaPos.y / deltaDistance
+		};
+
+		const vector = {
+			x: unitVector.x * distance,
+			y: unitVector.y * distance
+		};
+
 		return {
-			x: this.x,
-			y: this.y,
+			x: roundM5(this.x + vector.x),
+			y: roundM5(this.y + vector.y),
 		};
 	}
 }
