@@ -16,7 +16,7 @@ export const createUserbackupCoordinate = async (deviceId) =>
 
 	await pools.USER_COORDINATES.query(SQL_QUERIES.BACKUP_COORDINATE, [id, deviceId, 0, 0]);
 
-	return { id, deviceId };
+	return { id, deviceId, x: 0, y: 0 };
 };
 
 export const updateUserBackupCoordinate = async (id, x, y) =>
