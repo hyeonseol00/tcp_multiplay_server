@@ -64,9 +64,15 @@ class Game
 
 		const locationData = this.users.map((user) =>
 		{
-			const { x, y } = user.calculatePosition(maxLatency, newX, newY);
+			let [argX, argY] = [newX, newY];
+			if (user.id != userId)
+				[argX, argY] = [0, 0];
+
+			const { x, y } = user.calculatePosition(maxLatency, argX, argY);
+
 			if (user.id == userId)
 				user.updatePosition(x, y);
+
 			return { id: user.id, playerId: user.playerId, x, y };
 		});
 
