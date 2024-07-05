@@ -38,8 +38,9 @@ class User
 
 	calculatePosition(latency, newX = this.x, newY = this.y)
 	{
-		const timeDiff = latency / 1000;
-		const speed = 300;
+		const elapsedTime = Date.now() - this.lastUpdateTime;
+		const timeDiff = elapsedTime / 1000;
+		const speed = 3;
 		const distance = speed * timeDiff;
 
 		const deltaPos = {
